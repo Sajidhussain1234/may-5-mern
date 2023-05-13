@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const morgan = require('morgan')
+const morgan = require("morgan");
 const cors = require("cors");
 
 const port = 3001;
@@ -8,7 +8,7 @@ const port = 3001;
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(morgan('tiny'));
+app.use(morgan("tiny"));
 
 //======================== Start Database ========================
 
@@ -22,18 +22,42 @@ const MerchantsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  education: {
+    type: String,
+    required: true,
+  },
 });
 
 // model name should be singular starting with capital
 const Merchant = mongoose.model("Merchant", MerchantsSchema);
 
-const mongoURI =  "mongodb+srv://sajid:5umzUY2v82s83lUF@cluster0.davbvrm.mongodb.net/DB1?retryWrites=true&w=majority";
-
 // Made connection with database atalas
+
+// MongoDB Connection String
+const mongoURI = "mongodb+srv://sajid:VmSkQEeF3e2s9MGm@cluster0.davbvrm.mongodb.net/DB1?retryWrites=true&w=majority";
+  
+
+// Mongoose connection method
 mongoose
   .connect(mongoURI)
   .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Failed to connect to MongoDB", err));
+  .catch((error) => {
+    console.error("Failed to connect with MongoDB", error);
+    process.exit(0);
+  });
+
+  const db = mongoose.connection;
+
+// Handle connection errors
+db.on('error', (error) => console.error('MongoDB connection error:', error));
+
+// Close the MongoDB connection before terminating the server
+process.on('SIGINT', () => {
+  db.close(() => {
+    console.log('MongoDB connection closed');
+    process.exit(0);
+  });
+});
 
 //======================== Creating Routes ========================
 
@@ -52,46 +76,47 @@ app.get("/api/merchants/:id", async (req, res) => {
   try {
     const merchant = await Merchant.findById(req.params.id);
     res.json(merchant);
-  } 
-  catch (error) {
-        res.status(500).send(error);
+  } catch (error) {
+    res.status(500).send(error);
   }
 });
 
 // Route3: Insert a new merchant record
-  app.post('/api/merchant', async(req, res)=>{
-    const {name, email} = req.body;
-    try {
-        const merchant = new Merchant({ name, email });
-        const savedMerchant = await merchant.save();
-        res.json(savedMerchant);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-  });
+app.post("/api/merchant", async (req, res) => {
+  console.log(req.body)
+  const { name, email, education } = req.body;
+  try {
+    const merchant = new Merchant({ name, email,education });
+    const savedMerchant = await merchant.save();
+    res.json(savedMerchant);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
-  // Route4: Update an existing merchant record
-  app.put('/api/merchants/:id', async(req, res)=>{
-    const {name, email} = req.body;
-    try {
-        const updatedMerchant = await Merchant.findByIdAndUpdate(req.params.id, 
-            { $set: 
-                {
-                   'name': name,
-                   'email': email
-                }            
-            }, 
-        { new: true }    
-        )
-        res.json(updatedMerchant);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-  });
+// Route4: Update an existing merchant record
+app.put("/api/merchants/:id", async (req, res) => {
+  const { name, email, education } = req.body;
+  try {
+    const updatedMerchant = await Merchant.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          name: name,
+          email: email,
+          education: education,
+        },
+      },
+      { new: true }
+    );
+    res.json(updatedMerchant);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
-
-// Route:5 Delete a record 
-app.delete("/api/merchant/:id", async (req, res) => {
+// Route:5 Delete a record
+app.delete("/api/merchants/:id", async (req, res) => {
   try {
     // Find the merchant whose want to delete.
     const deletedMerchant = await Merchant.findByIdAndDelete(req.params.id);

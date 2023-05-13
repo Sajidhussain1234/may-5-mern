@@ -4,7 +4,9 @@ import axios from 'axios'
 const AddNewMerchant = (props) => {
     const [newMerchant, setNewMerchant] = useState({
         name: "",
-        email: ""
+        email: "", 
+        education: ""
+
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +44,8 @@ const AddNewMerchant = (props) => {
                     <input type="text" className="form-control mx-2" id="name" name="name"  placeholder='Name' onChange={handleChange} />
                     {/* <label htmlFor="email" className="form-label">Email address</label> */}
                     <input type="email" className="form-control mx-2" id="email" name="email" placeholder='Email' onChange={handleChange} />
+                     {/* <label htmlFor="eduction" className="form-label">Education</label> */}
+                     <input type="education" className="form-control mx-2" id="education" name="education" placeholder='Education' onChange={handleChange} />
                     <button type="submit" className="btn btn-primary py-2">Submit</button>
                 </form>
             </div>
@@ -49,4 +53,4 @@ const AddNewMerchant = (props) => {
     )
 }
 
-export default AddNewMerchant
+export default AddNewMerchant;

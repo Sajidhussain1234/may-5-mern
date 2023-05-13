@@ -8,7 +8,8 @@ const Main = () => {
     // this state is for update merchant
     const [mrchnt, setMrchnt] = useState({
         name: "",
-        email: ""
+        email: "",
+        education: ""
     })
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
@@ -36,7 +37,7 @@ const Main = () => {
     const handleDeleteClick = async (delId) => {
         try {
             setIsLoading(true)
-            const response = await axios.delete(`http://localhost:3001/api/merchant/${delId}`);
+            const response = await axios.delete(`http://localhost:3001/api/merchants/${delId}`);
             setMerchants(merchants.filter(m => m._id !== response.data._id))
             console.log(response.data);
             setIsLoading(false)
@@ -110,7 +111,11 @@ const Main = () => {
                             <div className="col my-2 " key={merchant._id}>
                                 <div className="card" >
                                     <ul className="list-group list-group-flush">
-                                        <li className="list-group-item">Name:  <strong> {merchant.name} <br /> </strong>Email:<strong> {merchant.email} </strong></li>
+                                        <li className="list-group-item">
+                                            Name:  <strong> {merchant.name} </strong> <br />
+                                            Email:<strong> {merchant.email} </strong> <br />
+                                            Education:<strong> {merchant.education} </strong> 
+                                        </li>
                                         <div className='d-flex justify-content-between list-group-item'>
                                             <button type="button" className="btn btn-danger mx-1" onClick={() => handleDeleteClick(merchant._id)}> delete</button>
                                             <button type="button" className="btn btn-info mx-1" onClick={() => handleEditClick(merchant._id)}> edit</button>
@@ -149,7 +154,6 @@ const Main = () => {
                                     <h5 className="modal-title" id="exampleModalLabel">
                                         Edit Merchant:
                                     </h5>
-
                                     <button
                                         type="button"
                                         className="btn-close"
@@ -171,7 +175,7 @@ const Main = () => {
                                                 value={mrchnt.name}
                                                 onChange={onChange}
                                             />
-                                            <label htmlFor="eemail" className="form-label">
+                                            <label htmlFor="email" className="form-label">
                                                 email
                                             </label>
                                             <input
@@ -180,6 +184,17 @@ const Main = () => {
                                                 id="email"
                                                 name="email"
                                                 value={mrchnt.email}
+                                                onChange={onChange}
+                                            />
+                                             <label htmlFor="education" className="form-label">
+                                                education
+                                            </label>
+                                            <input
+                                                type="education"
+                                                className="form-control"
+                                                id="education"
+                                                name="education"
+                                                value={mrchnt.education}
                                                 onChange={onChange}
                                             />
                                         </div>
